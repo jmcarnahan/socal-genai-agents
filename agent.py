@@ -6,21 +6,13 @@ from config import Config
 from functions import Functions
 from threads import Threads
 
-class ChatPage():
+class Agent:
 
     assistant_id: str = None
-    title: str = None
 
-    def __init__(self, assistant_id=None, title=None):
+    def __init__(self, assistant_id):
         self.assistant_id = assistant_id
-        self.title = title
         self.openai_client = Config.get_openai_client()
-
-    def display_content(self, content):
-        if isinstance(content, str):
-            st.markdown(content)
-        elif isinstance(content, Image.Image):
-            st.image(content)
 
     def get_messages(self, thread_id):
         response_msgs = []
@@ -95,30 +87,6 @@ class ChatPage():
                             print("Failed to submit tool outputs:", e)
                     else:
                         print("No tool outputs to submit.")
-
-
-
-    def display_chatbot(self):
-
-        st.markdown(f"## {self.title}")
-
-        thread_id = Threads().get_current_thread_id()
-        messages_key = f"{thread_id}-messages"
-
-        # Initialize chat history
-        if messages_key not in st.session_state:
-            st.session_state[messages_key] = Threads().get_messages(thread_id)
-        
-        for message in st.session_state[messages_key].values():
-            with st.chat_message(message["role"]):
-                self.display_content(message["content"])
-
-        if prompt := st.chat_input("What is up?"):
-            for message in self.get_response(prompt, thread_id):
-                if message["id"] not in st.session_state[messages_key]:
-                    st.session_state[messages_key][message["id"]] = message
-                    with st.chat_message(message["role"]):
-                        self.display_content(message["content"])
 
 
 

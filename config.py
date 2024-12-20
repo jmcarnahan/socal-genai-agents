@@ -10,15 +10,20 @@ import logging
 
 load_dotenv()
 
+logger = logging.getLogger()
+
 class Config:
     _instance = None
 
     def __new__(cls):
         if cls._instance is None:
+            #logging.getLogger('sqlalchemy.engine.Engine').setLevel(logging.WARNING)
             cls._instance = super(Config, cls).__new__(cls)
+            cls._instance.logger = logging.getLogger(cls.__name__)
             cls._instance.engines = {}
             metadata_db_path = os.getenv('METADATA_FILE', '.metadata.db')
-            cls._instance.engines['default'] = create_engine(f"sqlite:///{metadata_db_path}", echo=True)
+            cls._instance.logger.info(f"Using metadata db path: {metadata_db_path}")
+            cls._instance.engines['default'] = create_engine(f"sqlite:///{metadata_db_path}", echo=False)
             api_key = os.getenv('OPENAI_API_KEY')
             if not api_key:
                 raise ValueError("API key is not set. Please ensure the OPENAI_API_KEY is set in the .env file.")
@@ -29,6 +34,7 @@ class Config:
     def initialize(cls):
         if cls._instance is None:
             cls._instance = cls.__new__(cls)
+
 
     @classmethod
     def get_db_engine(cls, db_path="default"):
@@ -66,21 +72,6 @@ class Config:
         return os.getenv('OPENAI_PROJECT')
 
 
-if __name__ == "__main__":
 
-    logging.basicConfig(level=logging.WARNING)
-    logging.getLogger().setLevel(logging.WARNING)
-    logging.getLogger('sqlalchemy.engine.Engine').setLevel(logging.WARNING)
-    logging.getLogger('sqlalchemy.engine.Engine').propagate = False
-    session = Config.get_db_session("test.db")
-    session.execute(text("CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY, name TEXT)"))
-    session.execute(text("INSERT INTO test (name) VALUES ('test')"))
-    session.commit()
-    # do a query to make sure the data was inserted
-    result = session.execute(text("SELECT * FROM test")).fetchall()
-    print(result)
-    session.close()
-    Config.close_db_engine("test.db")
-    Config.get_openai_client()
 
 

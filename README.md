@@ -56,6 +56,14 @@ You will need to set the following environment variables (use .env)
 - CUSTOMER_DATA_FILE
 - METADATA_FILE
 
+If you want to use Google Auth you will also want to set
+
+- GOOGLE_AUTH_ENABLED=True
+- GOOGLE_AUTH_CREDS_PATH
+- GOOGLE_AUTH_COOKIE_NAME
+- GOOGLE_AUTH_COOKIE_KEY
+- GOOGLE_AUTH_REDIRECT_URI
+
 ## Creation of the Agents
 
 To create the agents execute the cells in the notebook

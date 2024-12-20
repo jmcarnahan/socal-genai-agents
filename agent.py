@@ -9,10 +9,13 @@ from threads import Threads
 class Agent:
 
     assistant_id: str = None
+    openai_client = None
+    functions: Functions = None
 
-    def __init__(self, assistant_id):
+    def __init__(self, assistant_id, functions):
         self.assistant_id = assistant_id
         self.openai_client = Config.get_openai_client()
+        self.functions = functions
 
     def get_messages(self, thread_id):
         response_msgs = []
@@ -61,7 +64,7 @@ class Agent:
                     # Loop through each tool in the required action section
                     tool_outputs = []
                     for tool in run.required_action.submit_tool_outputs.tool_calls:
-                        function_to_call = getattr(Functions, tool.function.name, None)
+                        function_to_call = getattr(self.functions, tool.function.name, None)
                         if function_to_call:
                             try:
                                 print(f"Calling function {tool.function}")

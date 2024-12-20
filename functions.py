@@ -14,10 +14,9 @@ load_dotenv()
 
 class Functions:
 
-  def use_numbers (a, b):
+  def use_numbers (self, a, b):
       return json.dumps({"value": a - b})
   
-
   def _get_google_creds ():
     # If modifying these scopes, delete the file .token.json.
     SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly", "https://www.googleapis.com/auth/gmail.send"]
@@ -49,7 +48,7 @@ class Functions:
     return creds
 
 
-  def execute_sql_googlesheets (sql_query):
+  def execute_sql_googlesheets (self, sql_query):
     print("Executing SQL: " + sql_query)
 
     # The ID and range of a google spreadsheet.
@@ -81,7 +80,7 @@ class Functions:
       print(err)
       return json.dumps({"value": "No data found."})
     
-  def send_email(to, subject, body):
+  def send_email(self, to, subject, body):
 
     creds = Functions._get_google_creds()
     try:
@@ -99,6 +98,12 @@ class Functions:
     except HttpError as err:
       print(err)
       return json.dumps({"value": "No data found."})
+    
+  # def get_bigquery_client():
+  #   from google.cloud import bigquery
+  #       if self.bq is None:
+  #           self.bq = bigquery.Client(project=self.project_id)
+  #       return self.bq
 
 
 

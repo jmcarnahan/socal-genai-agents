@@ -14,7 +14,9 @@ class Chat:
     threads: Threads = None
 
     def __init__(self, assistant_id, title, threads):
-        self.agent = Agent(assistant_id=assistant_id)
+        if 'functions' not in st.session_state:
+            st.session_state['functions'] = Functions()
+        self.agent = Agent(assistant_id=assistant_id, functions=st.session_state['functions'])
         self.title = title
         self.threads = threads
 
